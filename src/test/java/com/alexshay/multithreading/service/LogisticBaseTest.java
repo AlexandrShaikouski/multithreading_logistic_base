@@ -19,22 +19,34 @@ import static org.junit.Assert.*;
 
 public class LogisticBaseTest {
     private List<Van> vans;
+    private Semaphore territory;
+    private Semaphore terminal;
     private Van van;
     private ExecutorService service;
 
     @Before
     public void setParameters() throws ServiceFileException, ServiceParserException {
-        vans = Arrays.asList(new Van(),new Van(),new Van(),new Van(),new Van(),new Van(),new Van(),new Van(),new Van(),new Van());
-        van = new Van("name","Semaphore teritory","Semaphore terminal");
+        vans = Arrays.asList(new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal),
+                new Van("name",territory,terminal));
+        van = new Van("name",territory,terminal);
         service = Executors.newFixedThreadPool(1);
     }
     @Test
     public void checkVans(){
         vans.stream().forEach(s->service.submit(s));
+        assertTrue(territory.tryAcquire());
     }
     @Test
     public void checkVanRunnable(){
-        service.submit(van);
+        service.submit(new Van());
         assertFalse(service.isShutdown());
         service.shutdown();
         assertTrue(service.isShutdown());
@@ -46,7 +58,9 @@ public class LogisticBaseTest {
     }
     @After
     public void removeParameters(){
-
+        vans = null;
+        van = null;
+        service = null;
     }
 
 }
