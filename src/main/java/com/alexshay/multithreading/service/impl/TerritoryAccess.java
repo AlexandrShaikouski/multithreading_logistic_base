@@ -4,7 +4,7 @@ import com.alexshay.multithreading.service.Activity;
 
 public class TerritoryAccess implements Activity {
     @Override
-    public void doActivity() {
-
+    public void doActivity(String name) {
+        LOGGER.info("Waiting near enterance " + name);
     }
 }

@@ -4,7 +4,7 @@ import com.alexshay.multithreading.service.Activity;
 
 public class Terminal implements Activity {
     @Override
-    public void doActivity() {
-
+    public void doActivity(String name) {
+        LOGGER.info("Unloading/loading of goods " + name);
     }
 }
