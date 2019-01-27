@@ -11,15 +11,11 @@ import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Van implements Runnable, Serializable {
     private static final Logger LOGGER = LogManager.getLogger(Van.class);
-    private static Lock lock = new ReentrantLock();
-    private static Condition condition = lock.newCondition();
-    private static AtomicInteger atomicInteger = new AtomicInteger(0);
+    private static AtomicInteger atomicIntegerTerritory = new AtomicInteger(0);
+    private static AtomicInteger atomicIntegerTerminal = new AtomicInteger(0);
     private String name;
     private Semaphore territory;
     private Semaphore terminal;
@@ -38,8 +34,8 @@ public class Van implements Runnable, Serializable {
         this.isFull = isFull;
         this.isPerishableFoods = isPerishableFoods;
         activity = new TerritoryAccess();
-        if(isPerishableFoods){
-            atomicInteger.incrementAndGet();
+        if (isPerishableFoods) {
+            atomicIntegerTerritory.incrementAndGet();
         }
     }
 
@@ -47,22 +43,21 @@ public class Van implements Runnable, Serializable {
         while (activity != null) {
 
             try {
-                if(atomicInteger.get() != 0 && !isPerishableFoods){
-                    TimeUnit.MILLISECONDS.sleep(10);
-                }
                 if (activity instanceof TerritoryAccess) {
-                    territory.acquire();
-                    TimeUnit.SECONDS.sleep(1);
-                    activity.doActivity(name);
-                    territory.release();
+                    doActivity(atomicIntegerTerritory);
+                    if (isPerishableFoods) {
+                        atomicIntegerTerritory.decrementAndGet();
+                        atomicIntegerTerminal.incrementAndGet();
+                    }
+
                 } else if (activity instanceof TerminalAccess) {
-                    terminal.acquire();
-                    TimeUnit.SECONDS.sleep(1);
-                    activity.doActivity(name);
-                    terminal.release();
+                    doActivity(atomicIntegerTerminal);
+                    if (isPerishableFoods) {
+                        atomicIntegerTerminal.decrementAndGet();
+                    }
                 } else {
-                    TimeUnit.SECONDS.sleep(1);
                     activity.doActivity(name);
+                    TimeUnit.SECONDS.sleep(1);
                     isFull = !isFull;
                 }
                 activity = Activity.changeActivity(activity);
@@ -71,6 +66,16 @@ public class Van implements Runnable, Serializable {
             }
         }
 
+    }
+
+    private void doActivity(AtomicInteger atomicInteger) throws InterruptedException {
+        if (atomicInteger.get() != 0 && !isPerishableFoods) {
+            TimeUnit.MILLISECONDS.sleep(10);
+        }
+        territory.acquire();
+        activity.doActivity(name);
+        TimeUnit.SECONDS.sleep(1);
+        territory.release();
     }
 
     public void setTerritory(Semaphore territory) {
@@ -110,8 +115,8 @@ public class Van implements Runnable, Serializable {
     }
 
     public void setPerishableFoods(boolean perishableFoods) {
-        if(perishableFoods){
-            atomicInteger.incrementAndGet();
+        if (perishableFoods) {
+            atomicIntegerTerritory.incrementAndGet();
         }
         isPerishableFoods = perishableFoods;
     }
@@ -125,13 +130,12 @@ public class Van implements Runnable, Serializable {
                 isPerishableFoods == van.isPerishableFoods &&
                 Objects.equals(name, van.name) &&
                 Objects.equals(territory, van.territory) &&
-                Objects.equals(terminal, van.terminal) &&
-                Objects.equals(activity, van.activity);
+                Objects.equals(terminal, van.terminal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, territory, terminal, activity, isFull, isPerishableFoods);
+        return Objects.hash(name, territory, terminal, isFull, isPerishableFoods);
     }
 
     @Override
