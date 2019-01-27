@@ -27,28 +27,28 @@ public class LogisticBaseTest {
         territory = Constants.TERRITORY;
         terminal = Constants.TERMINAL;
         vans = Arrays.asList(
-                new Van("Alex", territory, terminal, false, false),
-                new Van("Mike", territory, terminal, false, false),
-                new Van("Felix", territory, terminal, true, false),
-                new Van("Zeus", territory, terminal, false, true),
-                new Van("Din", territory, terminal, true, true),
-                new Van("Gem", territory, terminal, false, false),
-                new Van("Max", territory, terminal, false, false),
-                new Van("Odin", territory, terminal, true, false),
-                new Van("Dionis", territory, terminal, true, false),
-                new Van("Lex", territory, terminal, true, false),
-                new Van("alex", territory, terminal, false, false),
-                new Van("mike", territory, terminal, false, false),
-                new Van("felix", territory, terminal, true, false),
-                new Van("zeus", territory, terminal, false, true),
-                new Van("din", territory, terminal, true, true),
-                new Van("gem", territory, terminal, false, false),
-                new Van("max", territory, terminal, false, false),
-                new Van("odin", territory, terminal, true, false),
-                new Van("dionis", territory, terminal, true, false),
-                new Van("lex", territory, terminal, true, false));
+                new Van("Alex", false, false),
+                new Van("Mike", false, false),
+                new Van("Felix", true, false),
+                new Van("Zeus", false, true),
+                new Van("Din", true, true),
+                new Van("Gem", false, false),
+                new Van("Max", false, false),
+                new Van("Odin", true, false),
+                new Van("Dionis", true, false),
+                new Van("Lex", true, false),
+                new Van("alex", false, false),
+                new Van("mike", false, false),
+                new Van("felix", true, false),
+                new Van("zeus", false, true),
+                new Van("din", true, true),
+                new Van("gem", false, false),
+                new Van("max", false, false),
+                new Van("odin", true, false),
+                new Van("dionis", true, false),
+                new Van("lex", true, false));
 
-        van = new Van("name", territory, terminal, true, false);
+        van = new Van("name", true, false);
         service = Executors.newFixedThreadPool(1);
     }
 

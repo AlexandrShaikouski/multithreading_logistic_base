@@ -1,6 +1,5 @@
 package com.alexshay.multithreading.dao.builder.impl;
 
-import com.alexshay.multithreading.dao.Constants;
 import com.alexshay.multithreading.entity.Van;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,6 @@ public class VanHandler extends DefaultHandler {
     private List<Van> vans;
     private Van current;
     private String qName;
-    private final String[] fields = new String[]{"name", "is_full", "is_perishable_foods"};
 
     public List<Van> getVans() {
         return vans;
@@ -27,8 +25,6 @@ public class VanHandler extends DefaultHandler {
             vans = new ArrayList<>();
         } else if ("van".equals(qName)) {
             current = new Van();
-            current.setTerritory(Constants.TERRITORY);
-            current.setTerminal(Constants.TERMINAL);
         } else {
             this.qName = qName;
         }
